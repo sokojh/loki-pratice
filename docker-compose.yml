@@ -1,4 +1,3 @@
-# docker-compose.yml
 version: "3"
 
 services:
@@ -13,9 +12,19 @@ services:
   promtail:
     image: grafana/promtail:2.9.0
     volumes:
-      - /var/log:/var/log
-      - ./promtail-config.yaml:/etc/promtail/config.yml
+      - ./test-logs:/var/log  
+      - ./promtail-config.yaml:/etc/promtail/config.yml:ro
     command: -config.file=/etc/promtail/config.yml
+    user: root
+    networks:
+      - loki
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./test-logs:/var/log/nginx  
     networks:
       - loki
 
